@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { CommentNode, mockComments as initialComments } from '@/lib/mockComments';
+import { CommentNode } from '@/types';
 import CommentItem from '@/components/CommentItem';
 
 export default function CommentSection() {
-  const [comments, setComments] = useState<CommentNode[]>(initialComments);
+  const [comments, setComments] = useState<CommentNode[]>([]);
   const [newComment, setNewComment] = useState('');
   const [isSpoiler, setIsSpoiler] = useState(false);
 
@@ -74,9 +74,15 @@ export default function CommentSection() {
       </div>
 
       <div className="space-y-6">
-        {comments.map((comment) => (
-          <CommentItem key={comment.id} comment={comment} />
-        ))}
+        {comments.length > 0 ? (
+          comments.map((comment) => (
+            <CommentItem key={comment.id} comment={comment} />
+          ))
+        ) : (
+          <div className="text-center py-12 border border-slate-700/50 rounded-xl bg-slate-800/20">
+             <p className="text-slate-400">Henüz hiç yorum yapılmamış. İlk yorumu sen yap!</p>
+          </div>
+        )}
       </div>
     </div>
   );

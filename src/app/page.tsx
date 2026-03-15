@@ -1,7 +1,16 @@
-import { mockShows } from '@/lib/mockData';
+import { Show } from '@/types';
 import ShowCard from '@/components/ShowCard';
+import { getPopularShows } from '@/lib/tmdb';
+import Pagination from '@/components/Pagination';
 
-export default function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
+  // Arama parametrelerini NextJs app router (server component) için asenkron yakalama
+  const resolvedParams = await searchParams;
+  const page = parseInt(resolvedParams.page || '1', 10);
+  
+  // Gerçek API verisi yükleniyor (hata durumunda boş dizi dönecek şekilde ayarlanmıştır)
+  const shows: Show[] = await getPopularShows(page);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Hero Section */}
@@ -15,11 +24,18 @@ export default function Home() {
       </div>
 
       {/* Dizi Listesi Gelecek Alan (Placeholder) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8">
-        {mockShows.map((show) => (
-          <ShowCard key={show.id} show={show} />
-        ))}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+        {shows.length > 0 ? (
+          shows.map((show) => <ShowCard key={show.id} show={show} />)
+        ) : (
+          <div className="col-span-full text-center py-20 border-2 border-dashed border-slate-700 rounded-2xl">
+            <p className="text-slate-400 font-medium">İçerikler Yükleniyor veya Henüz Eklenmemiş...</p>
+          </div>
+        )}
       </div>
+
+      {/* Sayfalama (Pagination) Modülü */}
+      {shows.length > 0 && <Pagination currentPage={page} />}
     </div>
   );
 }

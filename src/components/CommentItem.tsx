@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CommentNode } from '@/lib/mockComments';
+import { CommentNode } from '@/types';
 
 export default function CommentItem({ comment }: { comment: CommentNode }) {
   const [showSpoiler, setShowSpoiler] = useState(false);
